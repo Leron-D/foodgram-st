@@ -23,10 +23,7 @@ class FoodgramAPITestCase(TestCase):
         self.ingredient = Ingredient.objects.create(name="Соль", measurement_unit="грамм")
 
         # Путь к изображению
-        self.image_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            "data/images/brauni.jpg"
-        )
+        self.image_path = "data/images/brauni.jpg"
 
     def test_list_exists(self):
         """Проверка доступности списка рецептов."""
