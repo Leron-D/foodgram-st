@@ -109,18 +109,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up nodeJS
-        # Это готовый воркфлоу для установки Node.js на раннер
         uses: actions/setup-node@v4
         with:
-          # Это параметр воркфлоу, указывающий нужную версию Node.js
           node-version: 18
+      - name: Check Node.js and npm versions
+        run: |
+          node -v
+          npm -v
       - name: Install dependencies
-        # Эта команда устанавливает зависимости для фронтенда
         run: |
           cd frontend/
           npm ci
       - name: Test frontend
-        # Запускаем тесты
         run: |
           cd frontend/
           npm run test
