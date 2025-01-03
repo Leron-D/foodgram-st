@@ -26,6 +26,9 @@ jobs:
         python -m pip install --upgrade pip 
         pip install ruff==0.8.0
         pip install -r backend/requirements.txt
+    # DJANGO_SETTINGS_MODULE
+    - name: Set DJANGO_SETTINGS_MODULE
+      run: echo "DJANGO_SETTINGS_MODULE=backend.settings" >> $GITHUB_ENV
     # Запускаем ruff
     - name: Lint with ruff
       # Вызываем ruff и указываем ему,
