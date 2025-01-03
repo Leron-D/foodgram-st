@@ -13,11 +13,10 @@ class FoodgramAPITestCase(TestCase):
             first_name="Test",
             last_name="Test",
             username="testuser",
-            password="testpassword",
-            avatar=None
+            password="testpassword"
         )
         self.auth_client = Client()
-        self.auth_client.login(username="testuser", password="testpassword")
+        self.auth_client.login(email="testemail@mail.ru", password="testpassword")
 
         # Создание тестового ингредиента
         self.ingredient = Ingredient.objects.create(name="Соль", measurement_unit="грамм")
