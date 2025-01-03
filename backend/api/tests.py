@@ -7,17 +7,17 @@ class FoodgramAPITestCase(TestCase):
         self.guest_client = Client()
 
     def test_list_exists(self):
-        """Проверка доступности списка рецептов."""
+        """Проверка доступности списка рецептов"""
         response = self.guest_client.get('/api/recipes/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_list_exists(self):
-        """Проверка доступности списка рецептов."""
+    def test_registration_exists(self):
+        """Проверка доступности страницы регистрации"""
         response = self.guest_client.get('/localhost/signup')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_recipe_unauthorized(self):
-        """Проверка создания рецепта для неавторизованного пользователя (ошибка 401)."""
+        """Проверка создания рецепта для неавторизованного пользователя (ошибка 401)"""
         recipe_data = {
             'name': 'Тестовый рецепт',
             'ingredients': [],
