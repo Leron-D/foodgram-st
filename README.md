@@ -52,7 +52,7 @@ API разработан с использованием **Django REST Framework
 docker-compose up --build -d
 ```
 ### **4. Предзагрузка тестовых данных**
-После того как образы и контейнеры соберутся, необходимо в строгом порядке выполнить следующие команды:
+После того как образы и контейнеры соберутся, необходимо, находясь в папке infra, в строгом порядке выполнить следующие команды:
 
 ```bash
 docker-compose exec backend python manage.py makemigrations users
@@ -68,3 +68,11 @@ docker-compose exec backend python manage.py collectstatic --noinput
 
 ### **5. Работа с сайтом**
 Сайт доступен через [localhost](http://localhost) или через [127.0.0.1](http://127.0.0.1)
+
+Работа с админ-панелью осуществляется через [localhost/admin](http://localhost/admin)
+Суперпользователь уже был создан (email: admin@gmail.com, пароль: admin123)
+Чтобы создать нового суперпользователя необходимо выполнить команду:
+
+```bash
+docker-compose exec backend python manage.py createsuperuser
+```
