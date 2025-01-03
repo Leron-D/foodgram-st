@@ -41,6 +41,7 @@ jobs:
         # Поэтому подключаемся к 127.0.0.1:5432
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
+      #
       run: |
         python -m ruff check backend/
         cd backend/
