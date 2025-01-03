@@ -119,6 +119,9 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend/
+          npm install react-scripts@latest
+          npm install jest@latest
+          npm install @testing-library/react@latest
           npm install --legacy-peer-deps
       - name: Test frontend
         run: |
