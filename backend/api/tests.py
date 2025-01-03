@@ -41,6 +41,7 @@ class FoodgramAPITestCase(TestCase):
                 "text": "Описание тестового рецепта",
                 "cooking_time": 30,
                 "image": image,
+                "author": self.user,
                 "ingredients": [{"id": self.ingredient.id, "amount": 10}],
             }
             response = self.auth_client.post("/api/recipes/", data, format="multipart")
