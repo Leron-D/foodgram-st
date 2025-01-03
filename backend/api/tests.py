@@ -12,8 +12,8 @@ class FoodgramAPITestCase(TestCase):
         response = self.guest_client.get('/api/recipes/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_user_registration(self):
-        """Проверка регистрации нового пользователя."""
+    def test_user_registration_success(self):
+        """Проверка успешной регистрации нового пользователя."""
         user_data = {
             'username': 'testuser',
             'password': 'testpassword123',
@@ -22,7 +22,7 @@ class FoodgramAPITestCase(TestCase):
             'last_name': 'Test'
         }
 
-        response = self.guest_client.post('/api/auth/register/', data=user_data)
+        response = self.guest_client.post('/users/', data=user_data)
 
         # Проверяем, что запрос завершился успешно (код 201 Created)
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
