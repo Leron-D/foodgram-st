@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import User
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator
 
 
 class Ingredient(models.Model):
