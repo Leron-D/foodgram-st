@@ -98,7 +98,7 @@ const RecipeEdit = ({ onItemDelete }) => {
         .catch((err) => {
           history.push("/recipes");
         });
-    },
+    }, [id]
   );
 
   const handleIngredientAutofill = ({ id, name, measurement_unit }) => {
