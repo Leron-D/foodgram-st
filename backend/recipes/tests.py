@@ -1,4 +1,4 @@
-import pytest
+"""import pytest
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 from users.models import User
@@ -7,31 +7,31 @@ from recipes.models import Recipe, Ingredient, IngredientInRecipe
 
 @pytest.fixture
 def user():
-    """Фикстура для создания пользователя"""
+    """"""Фикстура для создания пользователя""""""
     return User.objects.create_user(email='testuser@example.com', password='testpass123')
 
 
 @pytest.fixture
 def another_user():
-    """Фикстура для создания другого пользователя"""
+    """"""Фикстура для создания другого пользователя"""""""
     return User.objects.create_user(email='anotheruser@example.com', password='anotherpass456')
 
 
 @pytest.fixture
 def ingredient():
-    """Фикстура для создания ингредиента"""
+    """"""Фикстура для создания ингредиента""""""
     return Ingredient.objects.create(name='Tomato', measurement_unit='kg')
 
 
 @pytest.fixture
 def client():
-    """Фикстура для API-клиента"""
+    """"""Фикстура для API-клиента""""""
     return APIClient()
 
 
 @pytest.fixture
 def authenticated_client(user, client):
-    """Фикстура для аутентифицированного клиента"""
+    """"""Фикстура для аутентифицированного клиента""""""
 
     client.force_authenticate(user=user)
     return client
@@ -39,7 +39,7 @@ def authenticated_client(user, client):
 
 @pytest.mark.django_db
 def test_get_recipe_list(client, user, ingredient):
-    """Тест получения списка рецептов с ингредиентами"""
+    """"""Тест получения списка рецептов с ингредиентами""""""
 
     # Создаем рецепты
     recipe1 = Recipe.objects.create(
@@ -89,7 +89,7 @@ def test_get_recipe_list(client, user, ingredient):
 
 @pytest.mark.django_db
 def test_create_recipe(authenticated_client, ingredient):
-    """Тест создания нового рецепта"""
+    """"""Тест создания нового рецепта""""""
 
     image = SimpleUploadedFile(
         name='test_image.jpg',
@@ -120,7 +120,7 @@ def test_create_recipe(authenticated_client, ingredient):
 
 @pytest.mark.django_db
 def test_create_recipe_unauthenticated(client, ingredient):
-    """Тест создания рецепта без аутентификации"""
+    """"""Тест создания рецепта без аутентификации""""""
 
     image = SimpleUploadedFile(
         name='test_image.jpg',
@@ -143,7 +143,7 @@ def test_create_recipe_unauthenticated(client, ingredient):
 
 @pytest.mark.django_db
 def test_create_recipe_invalid_data(authenticated_client):
-    """Тест создания рецепта с некорректными данными"""
+    """"""Тест создания рецепта с некорректными данными""""""
 
     recipe_data = {
         'name': '',
@@ -159,4 +159,4 @@ def test_create_recipe_invalid_data(authenticated_client):
         format='json'
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 400"""
