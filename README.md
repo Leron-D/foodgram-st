@@ -93,3 +93,5 @@ docker-compose exec backend python manage.py collectstatic --noinput
 ```bash
 docker-compose exec backend python manage.py createsuperuser
 ```
+
+Если вдруг пропали рецепты или интерфейс админ-панели на сайте, то можно попробовать очистить кэш и cookie.
