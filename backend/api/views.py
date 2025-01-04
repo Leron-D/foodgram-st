@@ -199,18 +199,6 @@ class UserViewSet(BaseViewSet):
         )
         return paginator.get_paginated_response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        user = get_object_or_404(User, pk=pk)
-        recipes = Recipe.objects.filter(author=user).order_by('-created_at')
-
-        user_data = UserSerializer(user, context={'request': request}).data
-        user_data.update({
-            'recipes': ShortRecipeSerializer(recipes, many=True, context={'request': request}).data,
-            'recipes_count': recipes.count(),
-        })
-
-        return Response(user_data)
-
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet, описывающий работу с ингредиентами"""
