@@ -78,7 +78,7 @@ docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py load_ingredients
 docker-compose exec backend python manage.py load_users
 docker-compose exec backend python manage.py load_recipes
-docker-compose exec backend python manage.py collectstatic --noinput
+docker-compose exec backend python manage.py collectstatic --no-input
 ```
 
 В результате выполнения этих команд в приложение загрузятся тестовые пользователи с рецептами.
