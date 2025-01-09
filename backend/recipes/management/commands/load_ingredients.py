@@ -17,10 +17,10 @@ class Command(BaseCommand):
 
         # Загружаем данные из JSON-файла
         with open(file_path, "r", encoding="utf-8") as file:
-            json.load(file)
+            data = json.load(file)
 
         # Добавляем ингредиенты в базу данных
-        ingredient_objects = [Ingredient(**item) for item in json.load(file)]
+        ingredient_objects = [Ingredient(**item) for item in data]
         created_count = Ingredient.objects.bulk_create(ingredient_objects)
 
         self.stdout.write(self.style.SUCCESS(f"{len(created_count)} ингредиентов успешно загружено!"))

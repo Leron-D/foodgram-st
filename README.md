@@ -75,11 +75,10 @@ docker-compose up --build -d
 docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py load_ingredients
 docker-compose exec backend python manage.py load_users
-docker-compose exec backend python manage.py load_recipes
 docker-compose exec backend python manage.py collectstatic --no-input
 ```
 
-В результате выполнения этих команд в приложение загрузятся тестовые пользователи с рецептами.
+В результате выполнения этих команд в приложение загрузятся тестовые пользователи.
 
 ### **5. Работа с сайтом**
 Сайт доступен через [localhost](http://localhost) или через [127.0.0.1](http://127.0.0.1)
