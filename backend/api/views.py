@@ -17,7 +17,8 @@ from users.models import User, Subscription
 from .serializers import (
     UserSerializer, RegistrationSerializer, PasswordChangeSerializer,
     RecipeSerializer, ShortRecipeSerializer, IngredientSerializer,
-    SubscribedUserSerializer, FavoriteSerializer, ShoppingCartSerializer
+    SubscribedUserSerializer, FavoriteSerializer, ShoppingCartSerializer,
+    SubscriptionSerializer
 )
 from .pagination import PagesPagination
 import csv
@@ -155,7 +156,9 @@ class UserViewSet(BaseViewSet):
                 {'error': 'Нельзя подписаться на самого себя'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
         subscription = Subscription.objects.filter(user=request.user, author=author)
+
         if request.method == "POST":
             if subscription.exists():
                 return Response(
@@ -163,7 +166,7 @@ class UserViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             subscription = Subscription.objects.create(author=author, user=request.user)
-            serializer = SubscribedUserSerializer(subscription, context={"request": request})
+            serializer = SubscriptionSerializer(subscription, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         subscription.delete()
@@ -183,8 +186,7 @@ class UserViewSet(BaseViewSet):
         user = request.user
         subscriptions = (
             Subscription.objects.filter(user=user)
-            .select_related('author')
-            .order_by('created_at')
+            .select_related('author').order_by('-id')
         )
 
         # Пагинация
@@ -192,8 +194,10 @@ class UserViewSet(BaseViewSet):
         paginator.page_size = request.query_params.get('limit', 6)
         paginated_subscriptions = paginator.paginate_queryset(subscriptions, request)
 
+        authors = [subscription.author for subscription in paginated_subscriptions]
+
         serializer = SubscribedUserSerializer(
-            paginated_subscriptions,
+            authors,
             many=True,
             context={'request': request}
         )

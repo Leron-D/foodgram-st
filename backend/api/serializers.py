@@ -153,6 +153,16 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "image", "cooking_time")
 
 
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериалайзер пдля получения подписок"""
+    user = serializers.ReadOnlyField(source='user.username')
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Subscription
+        fields = ('user', 'author')
+
+
 class SubscribedUserSerializer(UserSerializer):
     """Сериалайзер для получения информации о пользователях,
     на которых подписан текущий пользователь"""
@@ -179,7 +189,7 @@ class SubscribedUserSerializer(UserSerializer):
     def get_recipes(self, obj):
         request = self.context.get("request")
         recipes_limit = request.query_params.get("recipes_limit")
-        author_recipes = obj.author.recipes.all().order_by('-created_at')
+        author_recipes = obj.recipes.all()
 
         if recipes_limit:
             author_recipes = author_recipes[:int(recipes_limit)]
