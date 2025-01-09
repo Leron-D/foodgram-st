@@ -7,7 +7,7 @@ Foodgram - это проект, который дает возможность �
 Чтобы использовать все возможности сайта — нужна регистрация. Проверка адреса электронной почты не осуществляется, вы можете ввести любой email.
 Заходите и делитесь своими любимыми рецептами!
 
-Проект выполнил Шаньгин Максим Русланович.
+Проект выполнил Шаньгин Максим Русланович. Мой контакт (почта): leronshangin@yandex.ru
 
 ---
 
@@ -29,9 +29,9 @@ API разработан с использованием **Django REST Framework
 ---
 
 ## **Технологии**
-- Python 3.12
-- Django 3.x
-- Django REST Framework 3.x
+- Python
+- Django
+- Django REST Framework
 - SimpleJWT
 - Djoser
 
@@ -72,8 +72,6 @@ docker-compose up --build -d
 После того как образы и контейнеры соберутся, необходимо, находясь в папке infra, в строгом порядке выполнить следующие команды:
 
 ```bash
-docker-compose exec backend python manage.py makemigrations users
-docker-compose exec backend python manage.py makemigrations recipes
 docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py load_ingredients
 docker-compose exec backend python manage.py load_users
