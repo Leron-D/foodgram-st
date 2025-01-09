@@ -1,11 +1,37 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.core.validators import RegexValidator
+from django.db import models
+
 
 class User(AbstractUser):
     """Модель пользователей"""
 
-    email = models.EmailField(unique=True)
+    email = models.EmailField(
+        unique = True,
+        max_length = 254
+    )
+
+    username = models.CharField(
+        max_length = 150,
+        unique = True,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message="Username должен содержать только буквы, цифры и следующие символы: @ . + -"
+        )]
+    )
+
+    first_name = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    last_name = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
@@ -18,8 +44,9 @@ class User(AbstractUser):
     ]
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('email',)
 
     def __str__(self):
         return self.email
@@ -28,18 +55,17 @@ class Subscription(models.Model):
     """Модель подписок"""
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         on_delete=models.CASCADE,
-        related_name='user_of_subscription',
+        related_name='users_of_subscriptions',
         verbose_name='Пользователь'
     )
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         on_delete=models.CASCADE,
-        related_name='author',
+        related_name='authors',
         verbose_name='Автор рецептов'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

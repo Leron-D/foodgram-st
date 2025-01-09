@@ -24,13 +24,5 @@ class UserAdmin(UserAdmin):
 class SubscriptionAdmin(admin.ModelAdmin):
     """Модель подписок для админ-зоны проекта"""
 
-    list_display = ('user', 'author', 'get_created_at')
+    list_display = ('user', 'author')
     search_fields = ('user__email', 'author__email')
-    list_filter = ('created_at',)
-    ordering = ('-created_at',)
-
-    def get_created_at(self, obj):
-        """Отображает поле created_at с другим названием"""
-        return obj.created_at
-
-    get_created_at.short_description = 'Когда подписался'
