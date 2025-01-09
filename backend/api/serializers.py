@@ -20,14 +20,9 @@ class UserSerializer(DjoserUserSerializer):
     avatar = Base64ImageField(required=False)
 
     class Meta(DjoserUserSerializer.Meta):
-        fields = (
-            "id",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "avatar",
-            "is_subscribed",
+        fields = DjoserUserSerializer.Meta.fields + (
+            'avatar',
+            'is_subscribed'
         )
 
     def get_is_subscribed(self, obj):
