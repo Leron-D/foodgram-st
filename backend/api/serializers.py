@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from djoser.serializers import UserSerializer as DjoserUserSerializer
 from django.contrib.auth.password_validation import validate_password
 from recipes.models import (
     Recipe,
@@ -7,31 +8,18 @@ from recipes.models import (
     Favorite,
     ShoppingCart,
 )
-from django.core.files.base import ContentFile
+from drf_extra_fields.fields import Base64ImageField
 from users.models import User, Subscription
 from rest_framework.pagination import PageNumberPagination
-import base64
 
 
-class Base64ImageField(serializers.ImageField):
-    """Класс для перевода base64 в картинку"""
-
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith("data:image"):
-            format, imgstr = data.split(";base64,")
-            ext = format.split("/")[-1]
-            data = ContentFile(base64.b64decode(imgstr), name=f"image.{ext}")
-        return super().to_internal_value(data)
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Сериалайзер для получения пользователей"""
+class UserSerializer(DjoserUserSerializer):
+    """Сериалайзер для получения пользователей с дополнительными полями"""
 
     is_subscribed = serializers.SerializerMethodField()
     avatar = Base64ImageField(required=False)
 
-    class Meta:
-        model = User
+    class Meta(DjoserUserSerializer.Meta):
         fields = (
             "id",
             "username",

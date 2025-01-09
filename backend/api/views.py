@@ -19,7 +19,7 @@ from .serializers import (
     RecipeSerializer, ShortRecipeSerializer, IngredientSerializer,
     SubscriptionSerializer, FavoriteSerializer, ShoppingCartSerializer
 )
-from .pagination import CustomPagination
+from .pagination import PagesPagination
 import csv
 
 
@@ -59,7 +59,7 @@ class UserViewSet(BaseViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = CustomPagination
+    pagination_class = PagesPagination
 
     def get_permissions(self):
         """Метод на получение разрешений для других методов класса"""
@@ -221,7 +221,7 @@ class RecipeViewSet(BaseViewSet):
     queryset = Recipe.objects.all().order_by('-created_at')
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = CustomPagination
+    pagination_class = PagesPagination
 
     def get_queryset(self):
         """Метод для получения рецептов"""

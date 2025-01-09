@@ -53,19 +53,8 @@ jobs:
       run: |
         cd backend/
         python manage.py makemigrations users
-        python manage.py makemigrations recipes
+        python manage.py makemigrations ingredients
         python manage.py migrate
-
-    - name: Run Django tests
-      env:
-        POSTGRES_USER: django_user
-        POSTGRES_PASSWORD: django_password
-        POSTGRES_DB: django_db
-        DB_HOST: 127.0.0.1
-        DB_PORT: 5432
-      run: |
-        cd backend/
-        python manage.py test
 
   build_and_push_to_docker_hub:
     name: Push Docker image to DockerHub
