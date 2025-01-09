@@ -233,9 +233,9 @@ class RecipeViewSet(BaseViewSet):
         if author_id:
             queryset = queryset.filter(author__id=author_id)
         if is_favorited == '1' and self.request.user.is_authenticated:
-            queryset = queryset.filter(favorites__user=self.request.user)
+            queryset = queryset.filter(Favorite_set__user=self.request.user)
         if is_in_shopping_cart == '1' and self.request.user.is_authenticated:
-            queryset = queryset.filter(in_shopping_cart__user=self.request.user)
+            queryset = queryset.filter(ShoppingCart_ser__user=self.request.user)
         return queryset
 
     def perform_create(self, serializer):

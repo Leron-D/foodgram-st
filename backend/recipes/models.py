@@ -129,22 +129,30 @@ class IngredientInRecipe(models.Model):
                 f'для {self.recipe.name}')
 
 
-class Favorite(models.Model):
-    """Модель избранных рецептов"""
-    FAVORITE_RELATED_NAME = 'favorites'
-
+class UserOfRecipeBase(models.Model):
+    """Базовый класс для Favorite и ShoppingCart"""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name=FAVORITE_RELATED_NAME,
+        related_name='%(class)s_set',
         verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name=FAVORITE_RELATED_NAME,
+        related_name='%(class)s_set',
         verbose_name='Рецепт'
     )
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f'{self.user.username} -> {self.recipe.name}'
+
+
+class Favorite(UserOfRecipeBase):
+    """Модель избранных рецептов"""
 
     class Meta:
         verbose_name = 'Избранное'
@@ -157,28 +165,22 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        return (f'{self.recipe.name} добавлен в избранное'
+        return (f'{self.recipe.name} добавлен в избранное '
                 f'{self.user.last_name} {self.user.first_name}')
 
 
-class ShoppingCart(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='shopping_carts',
-        verbose_name='Пользователь'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='shopping_carts',
-        verbose_name='Рецепт'
-    )
+class ShoppingCart(UserOfRecipeBase):
+    """Модель корзины покупок"""
 
     class Meta:
         verbose_name = 'Корзина покупок'
         verbose_name_plural = 'Корзины покупок'
-        unique_together = ('user', 'recipe')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_user_recipe_shopping_cart'
+            )
+        ]
 
     def __str__(self):
-        return f'{self.user.username} -> {self.recipe.name}'
+        return f'{self.user} -> {self.recipe}'
