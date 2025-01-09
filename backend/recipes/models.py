@@ -134,13 +134,13 @@ class UserOfRecipeBase(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_users',
+        related_name='%(class)s_set',
         verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='%(class)s_recipes',
+        related_name='%(class)s_set',
         verbose_name='Рецепт'
     )
 
