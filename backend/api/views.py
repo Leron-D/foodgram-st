@@ -17,7 +17,7 @@ from users.models import User, Subscription
 from .serializers import (
     UserSerializer, RegistrationSerializer, PasswordChangeSerializer,
     RecipeSerializer, ShortRecipeSerializer, IngredientSerializer,
-    SubscriptionSerializer, FavoriteSerializer, ShoppingCartSerializer
+    SubscribedUserSerializer, FavoriteSerializer, ShoppingCartSerializer
 )
 from .pagination import PagesPagination
 import csv
@@ -163,7 +163,7 @@ class UserViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             subscription = Subscription.objects.create(author=author, user=request.user)
-            serializer = SubscriptionSerializer(subscription, context={"request": request})
+            serializer = SubscribedUserSerializer(subscription, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         subscription.delete()
@@ -192,7 +192,7 @@ class UserViewSet(BaseViewSet):
         paginator.page_size = request.query_params.get('limit', 6)
         paginated_subscriptions = paginator.paginate_queryset(subscriptions, request)
 
-        serializer = SubscriptionSerializer(
+        serializer = SubscribedUserSerializer(
             paginated_subscriptions,
             many=True,
             context={'request': request}

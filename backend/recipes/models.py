@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 
 
 class Ingredient(models.Model):
+    """Модель ингредиентов"""
     name = models.CharField(
         verbose_name = 'Название',
         max_length = 128,
@@ -34,6 +35,7 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
+    """Модель рецептов"""
     RECIPE_RELATED_NAME = 'recipes'
 
     name = models.CharField(
