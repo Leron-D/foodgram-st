@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from djoser.serializers import (
     UserSerializer as DjoserUserSerializer,
-    UserCreateSerializer,
     PasswordRetypeSerializer
 )
 from django.core.validators import MinValueValidator
@@ -34,23 +33,6 @@ class UserSerializer(DjoserUserSerializer):
             author=user.id,
             user=request_user.id
         ).exists()
-
-
-class RegistrationSerializer(UserCreateSerializer):
-    """Для регистрации пользователя используется
-    готовый сериализатор Djoser"""
-
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
-class PasswordChangeSerializer(PasswordRetypeSerializer):
-    """Для изменения пароля используется
-    готовый сериализатор Djoser"""
-
-    class Meta:
-        fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -135,7 +117,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         return (
             request.user.is_authenticated
-            and model.objects.filter(user=request.user, recipe=recipe).exists()
+            and model.objects.filter(
+            user=request.user,
+            recipe=recipe
+        ).exists()
         )
 
     def get_is_favorited(self, recipe):
@@ -164,7 +149,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class SubscribedUserSerializer(UserSerializer):
-    """Сериалайзер для получения информации о пользователях,
+    """Сериалайзер для получения информации об авторах,
     на которых подписан текущий пользователь"""
 
     recipes = serializers.SerializerMethodField()
@@ -186,52 +171,15 @@ class SubscribedUserSerializer(UserSerializer):
             "recipes_count",
         )
 
-    def get_recipes(self, obj):
+    def get_recipes(self, author):
         request = self.context.get("request")
-        recipes_limit = request.query_params.get("recipes_limit")
-        author_recipes = obj.recipes.all()
-
-        if recipes_limit:
-            author_recipes = author_recipes[:int(recipes_limit)]
+        recipes_limit = int(
+            request.GET.get("recipes_limit", 10**10)
+        )
+        author_recipes = author.recipes.all()[:recipes_limit]
 
         return ShortRecipeSerializer(
-            author_recipes, context={"request": request}, many=True
+            author_recipes,
+            context={"request": request},
+            many=True
         ).data
-
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    """Сериалайзер для работы с избранными рецептами"""
-
-    class Meta:
-        model = Favorite
-        fields = ("user", "recipe")
-
-    def validate(self, data):
-        """Переопределение встроенного метода validate"""
-
-        self._validate_uniqueness(data, Favorite)
-        return data
-
-    def _validate_uniqueness(self, data, model):
-        """Метод для проверки уникальности рецепта в списке избранного"""
-
-        if model.objects.filter(
-                user=self.context["request"].user,
-                recipe=data["recipe"]
-        ).exists():
-            raise serializers.ValidationError("Рецепт уже добавлен.")
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Сериалайзер для работы со списком покупок"""
-
-    class Meta:
-        model = ShoppingCart
-        fields = ("user", "recipe")
-
-    def validate(self, data):
-        user = self.context["request"].user
-        recipe = data["recipe"]
-        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError("Рецепт уже добавлен в корзину.")
-        return data

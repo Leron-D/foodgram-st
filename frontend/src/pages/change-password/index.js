@@ -80,7 +80,7 @@ const ChangePassword = ({ onPasswordChange, submitError, setSubmitError }) => {
             isAuth={true}
             placeholder="Подтвердите новый пароль"
             type="password"
-            name="repeat_password"
+            name="re_new_password"
             error={errors}
             submitError={submitError}
             onChange={onChange}
@@ -90,7 +90,7 @@ const ChangePassword = ({ onPasswordChange, submitError, setSubmitError }) => {
             type="submit"
             className={styles.button}
             disabled={
-              !isValid || values.new_password !== values.repeat_password
+              !isValid || values.new_password !== values.re_new_password
             }
           >
             Изменить пароль
