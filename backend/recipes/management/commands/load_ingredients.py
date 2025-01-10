@@ -23,4 +23,8 @@ class Command(BaseCommand):
         ingredient_objects = [Ingredient(**item) for item in data]
         created_count = Ingredient.objects.bulk_create(ingredient_objects)
 
-        self.stdout.write(self.style.SUCCESS(f"{len(created_count)} ингредиентов успешно загружено!"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{len(created_count)} ингредиентов успешно загружено!"
+            )
+        )

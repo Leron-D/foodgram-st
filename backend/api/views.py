@@ -14,7 +14,10 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from users.models import Subscription, User
 
@@ -133,7 +136,9 @@ class UserViewSet(DjoserUserViewSet):
             request
         )
 
-        authors = [subscription.author for subscription in paginated_subscriptions]
+        authors = [
+            subscription.author for subscription in paginated_subscriptions
+        ]
 
         serializer = SubscribedUserSerializer(
             authors,
@@ -207,7 +212,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        recipe_instance = get_object_or_404(model, user=request.user, recipe=recipe)
+        recipe_instance = get_object_or_404(
+            model,
+            user=request.user,
+            recipe=recipe
+        )
         recipe_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
