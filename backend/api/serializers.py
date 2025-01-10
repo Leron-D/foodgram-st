@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from djoser.serializers import (
-    UserSerializer as DjoserUserSerializer,
-    PasswordRetypeSerializer
+    UserSerializer as DjoserUserSerializer
 )
 from django.core.validators import MinValueValidator
 from recipes.models import (
