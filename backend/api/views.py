@@ -9,7 +9,6 @@ from rest_framework.permissions import (
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from django.http import FileResponse
-from django.shortcuts import redirect
 from recipes.models import (
     Recipe,
     Ingredient,
@@ -78,7 +77,9 @@ class UserViewSet(DjoserUserViewSet):
 
         author = get_object_or_404(User, pk=id)
         if author == request.user:
-            raise ValidationError({'error': 'Нельзя подписаться на самого себя'})
+            raise ValidationError(
+                {'error': 'Нельзя подписаться на самого себя'}
+            )
 
         subscription, created = Subscription.objects.get_or_create(
             user=request.user,
