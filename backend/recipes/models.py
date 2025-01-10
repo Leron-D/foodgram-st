@@ -1,7 +1,7 @@
-from django.db import models
-from users.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db import models
+from users.models import User
 
 
 class Ingredient(models.Model):

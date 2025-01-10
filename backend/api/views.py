@@ -1,29 +1,32 @@
-from rest_framework import viewsets, status
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly
+import io
+
+from django.http import FileResponse
+from django.utils import timezone
+from djoser.views import UserViewSet as DjoserUserViewSet
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    ShoppingCart,
 )
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
-from django.http import FileResponse
-from recipes.models import (
-    Recipe,
-    Ingredient,
-    Favorite,
-    ShoppingCart
-)
-from users.models import User, Subscription
-from .serializers import (
-    UserSerializer, RecipeSerializer, SubscriptionSerializer,
-    ShortRecipeSerializer, IngredientSerializer, SubscribedUserSerializer
-)
-from djoser.views import UserViewSet as DjoserUserViewSet
-from django.utils import timezone
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from users.models import Subscription, User
+
 from .pagination import PagesPagination
-import io
+from .serializers import (
+    IngredientSerializer,
+    RecipeSerializer,
+    ShortRecipeSerializer,
+    SubscribedUserSerializer,
+    SubscriptionSerializer,
+    UserSerializer,
+)
 
 
 class UserViewSet(DjoserUserViewSet):

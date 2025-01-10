@@ -1,17 +1,15 @@
-from rest_framework import serializers
-from djoser.serializers import (
-    UserSerializer as DjoserUserSerializer
-)
 from django.core.validators import MinValueValidator
+from djoser.serializers import UserSerializer as DjoserUserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (
-    Recipe,
+    Favorite,
     Ingredient,
     IngredientInRecipe,
-    Favorite,
+    Recipe,
     ShoppingCart,
 )
-from drf_extra_fields.fields import Base64ImageField
-from users.models import User, Subscription
+from rest_framework import serializers
+from users.models import Subscription, User
 
 
 class UserSerializer(DjoserUserSerializer):
