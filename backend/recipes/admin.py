@@ -41,4 +41,3 @@ class FavoriteAndShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('user__email', 'recipe__name')
     list_filter = ('user',)
-

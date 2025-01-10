@@ -17,7 +17,8 @@ class User(AbstractUser):
         unique = True,
         validators=[RegexValidator(
             regex=r'^[\w.@+-]+$',
-            message="Username должен содержать только буквы, цифры и следующие символы: @ . + -"
+            message='Username должен содержать только буквы, '
+                    'цифры и следующие символы: @ . + -'
         )]
     )
 

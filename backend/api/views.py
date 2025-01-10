@@ -50,7 +50,7 @@ class UserViewSet(DjoserUserViewSet):
         """Метод для смены или удаления аватара пользователя"""
 
         user = request.user
-        if request.method == "PUT":
+        if request.method == 'PUT':
             serializer = self.get_serializer(
                 user, data=request.data,
                 partial=True
@@ -262,13 +262,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 sorted(ingredient_totals.items(), key=lambda x: x[0])
         ):
             report_lines.append(
-                f"{number_of_product + 1}. "
-                f"{name.capitalize()} ({unit}) - {amount}"
+                f'{number_of_product + 1}. '
+                f'{name.capitalize()} ({unit}) - {amount}'
             )
 
         report_lines.append('\nРецепты, для которых нужны эти продукты:')
         for number_of_product, recipe_name in enumerate(sorted(recipe_names)):
-            report_lines.append(f"{number_of_product + 1}. {recipe_name}")
+            report_lines.append(f'{number_of_product + 1}. {recipe_name}')
 
         report_text = '\n'.join(report_lines)
         report_bytes = report_text.encode('utf-8')
