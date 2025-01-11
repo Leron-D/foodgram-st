@@ -1,5 +1,4 @@
 import io
-
 from django.http import FileResponse
 from django.utils import timezone
 from djoser.views import UserViewSet as DjoserUserViewSet
@@ -124,7 +123,7 @@ class UserViewSet(DjoserUserViewSet):
 
         user = request.user
         subscriptions = (
-            user.users_of_subscriptions.all()
+            user.users.all()
             .select_related('author')
         )
 
@@ -183,10 +182,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if author_id:
             queryset = queryset.filter(author__id=author_id)
         if is_favorited == '1' and self.request.user.is_authenticated:
-            queryset = queryset.filter(favorite_set__user=self.request.user)
+            queryset = queryset.filter(favorites__user=self.request.user)
         if is_in_shopping_cart == '1' and self.request.user.is_authenticated:
             queryset = queryset.filter(
-                shoppingcart_set__user=self.request.user
+                shoppingcarts__user=self.request.user
             )
         return queryset
 
@@ -253,7 +252,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredient_totals = {}
         recipe_names = set()
 
-        for item in (request.user.shoppingcart_set.all()
+        for item in (request.user.shoppingcarts.all()
                 .select_related('recipe')):
             recipe_names.add(item.recipe.name)
             for ingredient_in_recipe in item.recipe.recipe_ingredients.all():

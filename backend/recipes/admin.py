@@ -13,7 +13,8 @@ class IngredientAdmin(admin.ModelAdmin):
     """Админка для модели ингредиентов"""
 
     list_display = ('name', 'measurement_unit')
-    search_fields = ('name',)
+    list_filter = ('measurement_unit',)
+    search_fields = ('name', 'measurement_unit')
     ordering = ('name',)
 
 
@@ -26,10 +27,10 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'created_at')
     ordering = ('id',)
 
-    @admin.display(description='Добавлений в избранное')
+    @admin.display(description='В избранном')
     def get_favorites_count(self, recipe):
         """Отображает общее число добавлений рецепта в избранное"""
-        return recipe.favorite_set.count()
+        return recipe.favorites.count()
 
 
 @admin.register(IngredientInRecipe)

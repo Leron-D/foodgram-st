@@ -51,17 +51,21 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+
+User = get_user_model()
+
+
 class Subscription(models.Model):
     """Модель подписок"""
 
     user = models.ForeignKey(
-        get_user_model(),
+        User,
         on_delete=models.CASCADE,
-        related_name='users_of_subscriptions',
+        related_name='users',
         verbose_name='Пользователь'
     )
     author = models.ForeignKey(
-        get_user_model(),
+        User,
         on_delete=models.CASCADE,
         related_name='authors',
         verbose_name='Автор рецептов'
