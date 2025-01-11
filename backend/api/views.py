@@ -1,4 +1,3 @@
-import io
 from django.http import FileResponse
 from django.utils import timezone
 from djoser.views import UserViewSet as DjoserUserViewSet
@@ -18,6 +17,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly
 )
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from users.models import Subscription, User
 
 from .pagination import PagesPagination
@@ -26,8 +26,7 @@ from .serializers import (
     RecipeSerializer,
     ShortRecipeSerializer,
     SubscribedUserSerializer,
-    SubscriptionSerializer,
-    UserSerializer,
+    UserSerializer
 )
 
 
@@ -86,33 +85,30 @@ class UserViewSet(DjoserUserViewSet):
                 {'error': 'Нельзя подписаться на самого себя'}
             )
 
-        subscription, created = Subscription.objects.get_or_create(
-            user=request.user,
-            author=author
-        )
-
         if request.method == 'POST':
+            subscription, created = Subscription.objects.get_or_create(
+                user=request.user,
+                author=author
+            )
+
             if not created:
                 raise ValidationError({'errors': 'Подписка уже была оформлена'})
 
             return Response(
-                SubscriptionSerializer(
-                    subscription,
-                    context={'request': request}
-                ).data,
+                {
+                    "user": subscription.user.username,
+                    "author": subscription.author.username
+                },
                 status=status.HTTP_201_CREATED
             )
 
-        if not created:
-            subscription = get_object_or_404(
-                Subscription,
-                user=request.user,
-                author=author
-            )
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(
+            Subscription,
+            user=request.user,
+            author=author
+        ).delete()
 
-        raise ValidationError({'error': 'Подписка не существует'})
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'], url_path='subscriptions')
     def subscriptions(self, request):
@@ -194,35 +190,36 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @staticmethod
-    def _handle_create_or_delete(request, recipe, model):
+    def _toggle_favorite_or_shopping_cart(request, recipe, model):
         """
         Метод для создания и удаления рецептов
         в списке избранных или в корзине покупок
         """
         if request.method == 'POST':
-            if model.objects.filter(
-                    user=request.user,
-                    recipe=recipe
-            ).exists():
-                raise ValidationError('Рецепт уже добавлен')
-            model.objects.create(user=request.user, recipe=recipe)
+            obj, created = model.objects.get_or_create(
+                user=request.user,
+                recipe=recipe
+            )
+            if not created:
+                raise ValidationError({'errors': 'Рецепт уже добавлен'})
+
             return Response(
                 ShortRecipeSerializer(recipe).data,
                 status=status.HTTP_201_CREATED
             )
 
-        recipe_instance = get_object_or_404(
+        get_object_or_404(
             model,
             user=request.user,
             recipe=recipe
-        )
-        recipe_instance.delete()
+        ).delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post', 'delete'], url_path='favorite')
     def change_favorited_recipes(self, request, pk=None):
         """Метод для добавления или удаления рецепта из избранного"""
-        return self._handle_create_or_delete(
+        return self._toggle_favorite_or_shopping_cart(
             request,
             get_object_or_404(Recipe, pk=pk),
             Favorite
@@ -235,7 +232,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def change_shopping_cart(self, request, pk=None):
         """Метод для добавления или удаления рецепта из списка покупок"""
-        return self._handle_create_or_delete(
+        return self._toggle_favorite_or_shopping_cart(
             request,
             get_object_or_404(Recipe, pk=pk),
             ShoppingCart
@@ -271,7 +268,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         '''Нумерация и сортировка ингредиентов по имени'''
         for number_of_product, ((name, unit), amount) in enumerate(
-                sorted(ingredient_totals.items(), key=lambda x: x[0])
+            sorted(ingredient_totals.items(), key=lambda x: x[0])
         ):
             report_lines.append(
                 f'{number_of_product + 1}. '
@@ -283,10 +280,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             report_lines.append(f'{number_of_product + 1}. {recipe_name}')
 
         report_text = '\n'.join(report_lines)
-        report_bytes = report_text.encode('utf-8')
 
         return FileResponse(
-            io.BytesIO(report_bytes),
+            report_text,
             content_type='text/plain',
             filename='shopping_cart.txt'
         )
@@ -295,5 +291,5 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_link(self, request, pk=None):
         """Метод для получения короткой ссылки на рецепт"""
         recipe = get_object_or_404(Recipe, pk=pk)
-        short_link = request.build_absolute_uri(f'/s/{recipe.id}')
+        short_link = request.build_absolute_uri(reverse('recipe-detail', args=[recipe.pk]))
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)

@@ -19,7 +19,8 @@ class UserSerializer(DjoserUserSerializer):
     avatar = Base64ImageField(required=False)
 
     class Meta(DjoserUserSerializer.Meta):
-        fields = DjoserUserSerializer.Meta.fields + (
+        fields = (
+            *DjoserUserSerializer.Meta.fields,
             'avatar',
             'is_subscribed'
         )
@@ -51,9 +52,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
     )
-    amount = serializers.IntegerField(
-        validators=[MinValueValidator(1)]
-    )
+    amount = serializers.IntegerField(min_value=1)
 
     class Meta:
         model = IngredientInRecipe
@@ -84,7 +83,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
-        read_only_fields = ['author']
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('recipe_ingredients', [])
@@ -96,28 +94,28 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('recipe_ingredients', [])
         instance.ingredients.clear()
         self._save_ingredients(instance, ingredients_data)
-        instance = super().update(instance, validated_data)
-        return instance
+        return super().update(instance, validated_data)
 
     def _save_ingredients(self, recipe, ingredients_data):
-        ingredients_to_create = [
-            IngredientInRecipe(
-                recipe=recipe,
-                ingredient=ingredient['ingredient']['id'],
-                amount=ingredient['amount']
-            )
-            for ingredient in ingredients_data
-        ]
-        IngredientInRecipe.objects.bulk_create(ingredients_to_create)
+        IngredientInRecipe.objects.bulk_create(
+            [
+                IngredientInRecipe(
+                    recipe=recipe,
+                    ingredient=ingredient['ingredient']['id'],
+                    amount=ingredient['amount']
+                )
+                for ingredient in ingredients_data
+            ]
+        )
 
     def _check_existence(self, model, recipe):
         request = self.context.get('request')
         return (
             request.user.is_authenticated
             and model.objects.filter(
-            user=request.user,
-            recipe=recipe
-        ).exists()
+                user=request.user,
+                recipe=recipe
+            ).exists()
         )
 
     def get_is_favorited(self, recipe):
@@ -135,16 +133,6 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
-    """Сериалайзер пдля получения подписок"""
-    user = serializers.ReadOnlyField(source='user.username')
-    author = serializers.ReadOnlyField(source='author.username')
-
-    class Meta:
-        model = Subscription
-        fields = ('user', 'author')
-
-
 class SubscribedUserSerializer(UserSerializer):
     """Сериалайзер для получения информации об авторах,
     на которых подписан текущий пользователь"""
@@ -154,29 +142,18 @@ class SubscribedUserSerializer(UserSerializer):
         source='author.recipes.count'
     )
 
-    class Meta:
-        model = User
+    class Meta(UserSerializer.Meta):
         fields = (
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-            'avatar',
-            'is_subscribed',
+            *UserSerializer.Meta.fields,
             'recipes',
             'recipes_count',
         )
 
     def get_recipes(self, author):
-        request = self.context.get('request')
-        recipes_limit = int(
-            request.GET.get('recipes_limit', 10**10)
-        )
-        author_recipes = author.recipes.all()[:recipes_limit]
-
         return ShortRecipeSerializer(
-            author_recipes,
-            context={'request': request},
+            author.recipes.all()[:int(self.context.get('request').GET.get(
+                'recipes_limit',
+                10**10
+            ))],
             many=True
         ).data
