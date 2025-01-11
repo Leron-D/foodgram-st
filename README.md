@@ -83,7 +83,7 @@ docker-compose exec backend python manage.py collectstatic --no-input
 Сайт доступен через [localhost](http://localhost) или через [127.0.0.1](http://127.0.0.1)
 
 Работа с админ-панелью осуществляется через [localhost/admin](http://localhost/admin).
-Чтобы создать нового суперпользователя необходимо выполнить команду:
+Чтобы создать нового суперпользователя, необходимо выполнить команду:
 
 ```bash
 docker-compose exec backend python manage.py createsuperuser
