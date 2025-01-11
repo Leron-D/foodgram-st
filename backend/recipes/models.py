@@ -127,17 +127,22 @@ class UserOfRecipeBase(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
+        related_name='%(class)ss'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        related_name='%(class)ss'
     )
+
+    '''К сожалению я узнал, что default_related_name в Meta, 
+    не поддерживает динамическое указание названия related_name,
+    поэтому пришлось оставить related_name в ForeignKey'''
 
     class Meta:
         abstract = True
-        default_related_name = '%(class)ss'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
