@@ -16,19 +16,10 @@ class Command(BaseCommand):
             return
 
         with open(file_path, "r", encoding="utf-8") as file:
-            ingredient_objects = [
-                Ingredient(**item) for item in json.load(file)
-            ]
-
-        created_count = Ingredient.objects.bulk_create(ingredient_objects)
-
-        count = len(created_count)
-        message = (
-            f"{count} ингредиент загружен!"
-            if count == 1
-            else f"{count} ингредиента загружено!"
-            if 2 <= count <= 4
-            else f"{count} ингредиентов загружено!"
-        )
+            message = (
+                f"Загружено продуктов: {len(Ingredient.objects.bulk_create(
+                    Ingredient(**item) for item in json.load(file)
+                ))}"
+            )
 
         self.stdout.write(self.style.SUCCESS(message))

@@ -98,14 +98,12 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def _save_ingredients(self, recipe, ingredients_data):
         IngredientInRecipe.objects.bulk_create(
-            [
-                IngredientInRecipe(
-                    recipe=recipe,
-                    ingredient=ingredient['ingredient']['id'],
-                    amount=ingredient['amount']
-                )
-                for ingredient in ingredients_data
-            ]
+            IngredientInRecipe(
+                recipe=recipe,
+                ingredient=ingredient['ingredient']['id'],
+                amount=ingredient['amount']
+            )
+            for ingredient in ingredients_data
         )
 
     def _check_existence(self, model, recipe):
